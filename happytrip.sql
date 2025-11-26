@@ -603,3 +603,26 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+ALTER TABLE pays
+ADD COLUMN description TEXT NULL;
+
+UPDATE pays 
+SET description = 'La France est un pays d’Europe de l’Ouest reconnu pour la richesse de son patrimoine culturel, sa gastronomie et ses paysages variés. De la Tour Eiffel aux plages de la Côte d’Azur, en passant par les vignobles de Bordeaux, les montagnes des Alpes et les villages provençaux, le pays offre une diversité unique. Paris, capitale mondiale de l’art et de la mode, attire chaque année des millions de visiteurs. La France est également réputée pour son histoire, ses musées, sa culture et son art de vivre, faisant d’elle l’une des destinations touristiques les plus populaires au monde.'
+WHERE code_iso = 'FRA';
+
+
+UPDATE pays 
+SET description = 'Les États-Unis forment un vaste pays d’Amérique du Nord connu pour la diversité de ses paysages, sa puissance économique et son influence culturelle mondiale. Du Grand Canyon aux gratte-ciel de New York, en passant par les plages de Californie, les parcs nationaux, Miami ou encore Las Vegas, chaque région possède une identité forte. Terre d’innovation, de diversité et d’opportunités, le pays attire des millions de visiteurs grâce à ses grandes métropoles, ses routes mythiques et ses lieux naturels emblématiques.'
+WHERE code_iso = 'USA';
+
+
+
+UPDATE pays 
+SET description = 'L’Australie est un vaste pays-continent de l’hémisphère sud, célèbre pour ses paysages spectaculaires, sa faune unique et son mode de vie détendu. Des plages paradisiaques de la Gold Coast aux déserts du Centre Rouge en passant par la Grande Barrière de corail, l’Australie offre un environnement naturel exceptionnel. Sydney et Melbourne sont des villes dynamiques et multiculturelles, tandis que l’Outback révèle une culture aborigène millénaire. Destination prisée, le pays séduit par sa nature, son climat et sa qualité de vie.'
+WHERE code_iso = 'AUS';
+
+
+UPDATE pays 
+SET description = 'La Bolivie est un pays d’Amérique du Sud riche en cultures indigènes et en paysages spectaculaires. Elle abrite des sites naturels uniques comme le Salar d’Uyuni, le plus grand désert de sel du monde, ainsi que les montagnes des Andes et l’Altiplano. Ses villes historiques comme La Paz, perchée à plus de 3 500 mètres d’altitude, et Sucre, capitale constitutionnelle, témoignent d’un héritage culturel fort. La Bolivie est une destination authentique où traditions, nature sauvage et diversité ethnique se rencontrent.'
+WHERE code_iso = 'BOL';

@@ -14,7 +14,7 @@ const SVG_TO_DB = {
     BR: "BRA",
     CN: "CHN",
     IN: "IND"
-    // ajoute les autres ici...
+    
 };
 
 

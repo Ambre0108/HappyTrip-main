@@ -1,5 +1,5 @@
 <?php
-// Connexion
+
 $pdo = new PDO("mysql:host=localhost;dbname=happytrip;charset=utf8", "root", "");
 
 // Vérifier si un pays est demandé
