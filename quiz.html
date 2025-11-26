@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* ============================== */
+/* BASE */
+/* ============================== */
+
+body {
+    background: #d6efff;
+    font-family: 'Fredoka', Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* ============================== */
+/* CONTENEUR */
+/* ============================== */
+
+#quiz-container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #cfe9ff;
+    border: 6px solid #1e5fa1;
+    border-radius: 25px;
+    padding: 40px 30px;
+    text-align: center;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    position: relative;
+}
+
+/* Bandeau titre */
+#quiz-container::before {
+    content: "QUIZ";
+    display: block;
+    background: #a8d4ff;
+    color: #1e4c7d;
+    font-size: 50px;
+    font-weight: 900;
+    padding: 25px 0;
+    margin: -40px -30px 30px -30px;
+    border-radius: 20px 20px 0 0;
+    border-bottom: 4px solid #1e5fa1;
+}
+
+/* Masquer bandeau en fin de quiz */
+.end-screen::before {
+    display: none !important;
+}
+
+/* ============================== */
+/* QUESTION */
+/* ============================== */
+
+#status {
+    font-size: 26px;
+    font-weight: bold;
+    color: #1e4c7d;
+    margin-bottom: 20px;
+}
+
+#question {
+    font-size: 34px;
+    font-weight: 700;
+    color: #1e4c7d;
+    margin-bottom: 10px;
+    line-height: 1.4em;
+}
+
+/* ============================== */
+/* EXPLICATION */
+/* ============================== */
+
+.explanation {
+    margin: 25px auto;
+    padding: 20px 28px;
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    width: 85%;
+}
+
+/* ============================== */
+/* RÉPONSES */
+/* ============================== */
+
+.answer-btn {
+    width: 45%;
+    padding: 20px;
+    margin: 20px 2%;
+    font-size: 28px;
+    font-weight: bold;
+    border-radius: 35px;
+    background: #ffffff;
+    border: 3px solid #1e5fa1;
+    color: #1e5fa1;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.answer-btn:hover {
+    background: #e3f2fd;
+    transform: scale(1.05);
+}
+
+.correct { background: #2ecc71 !important; color: white; }
+.wrong { background: #e53935 !important; color: white; }
+
+/* ============================== */
+/* BOUTON SUIVANT */
+/* ============================== */
+
+#next-btn {
+    margin: 40px auto 0 auto;
+    padding: 12px 30px;
+    font-size: 22px;
+    border: 3px solid #1e5fa1;
+    background: white;
+    color: #1e5fa1;
+    border-radius: 30px;
+    cursor: pointer;
+    display: none;
+    font-weight: bold;
+}
+
+#next-btn:hover {
+    background: #1e5fa1;
+    color: white;
+}
+
+/* ============================== */
+/* FIN DU QUIZ */
+/* ============================== */
+
+/* ============================== */
+/* ÉCRAN FINAL — VERSION CORRIGÉE */
+/* ============================== */
+
+
+/* Bandeau FIN DU QUIZ, parfaitement collé */
+#quiz-end-banner {
+    width: calc(100% + 60px);
+    background: #a8d4ff;
+    color: #1e4c7d;
+    font-size: 50px;
+    font-weight: 900;
+    padding: 25px 0;
+    border-bottom: 4px solid #1e5fa1;
+    border-radius: 20px 20px 0 0;
+    margin: -40px -30px 30px -30px;
+    text-align: center;
+}
+
+.end-screen #quiz-end-banner {
+    margin-top: -60px !important;
+}
+
+
+/* Texte du message final */
+#quiz-end-text {
+    font-size: 28px;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    line-height: 1.4em;
+    max-width: 650px;
+    margin: 20px auto 40px auto;
+}
+
+/* Boutons fin */
+#quiz-end-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.end-btn {
+    padding: 12px 30px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #1e5fa1;
+    background: white;
+    border: 3px solid #1e5fa1;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.end-btn:hover {
+    background: #1e5fa1;
+    color: white;
+}
+
+
+/* Zone résultat propre */
+#result {
+    padding: 0;
+    margin: 0;
+    background: none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="quiz-container">
+    <div id="status"></div>
+    <div id="error" style="display:none;"></div>
+
+    <div id="question"></div>
+    <div id="explanation" class="explanation"></div>
+    <div id="choices"></div>
+
+    <button id="next-btn">Question suivante</button>
+
+    <div id="result"></div>
+</div>
+
+<script src="questions.js" defer></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const TOTAL = Math.min(5, questionsBank.length);
+    const quiz = [...questionsBank].sort(() => Math.random() - 0.5).slice(0, TOTAL);
+
+    let current = 0, score = 0;
+
+    const elQ = document.getElementById('question');
+    const elC = document.getElementById('choices');
+    const elE = document.getElementById('explanation');
+    const elS = document.getElementById('status');
+    const next = document.getElementById('next-btn');
+    const result = document.getElementById('result');
+    const container = document.getElementById('quiz-container');
+
+    function loadQuestion() {
+        const q = quiz[current];
+
+        elS.textContent = `Question ${current+1} / ${TOTAL}`;
+        elQ.textContent = q.question;
+
+        elE.style.display = 'none';
+        elE.textContent = "";
+
+        elC.innerHTML = "";
+        next.style.display = "none";
+
+        q.choices.forEach((txt, i) => {
+            const btn = document.createElement('button');
+            btn.className = "answer-btn";
+            btn.textContent = txt;
+            btn.onclick = () => check(i, btn);
+            elC.appendChild(btn);
+        });
+    }
+
+    function check(i, btn) {
+        const q = quiz[current];
+        const all = document.querySelectorAll('.answer-btn');
+
+        all.forEach(b => b.disabled = true);
+
+        if(i === q.answer) { btn.classList.add("correct"); score++; }
+        else {
+            btn.classList.add("wrong");
+            all[q.answer].classList.add("correct");
+        }
+
+        elE.textContent = q.explanation;
+        elE.style.display = "block";
+
+        next.style.display = "block";
+    }
+
+    next.onclick = () => {
+        current++;
+        if(current < TOTAL) loadQuestion();
+        else finish();
+    };
+
+    function finish() {
+
+        container.classList.add("end-screen");
+
+        elQ.textContent = "";
+        elE.style.display = "none";
+        elC.innerHTML = "";
+        next.style.display = "none";
+        elS.textContent = "";
+
+        result.innerHTML = `
+            <div id="quiz-end-banner">FIN DU QUIZ</div>
+
+            <div id="quiz-end-text">
+                Vous avez terminé le quiz avec un score de
+                <strong>${score}/${TOTAL}</strong>.<br>
+                Continuez d’explorer la carte interactive !
+            </div>
+
+            <div id="quiz-end-buttons">
+                <button class="end-btn" onclick="location.href='index1.html'">Retour à l'accueil</button>
+                <button class="end-btn" onclick="location.href='carte.html'">Retour à la carte</button>
+            </div>
+        `;
+    }
+
+    loadQuestion();
+});
+</script>
+
+</body>
+</html>
